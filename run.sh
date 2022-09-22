@@ -29,14 +29,10 @@ function main () {
 	iniciarInstanciaDB
 	
 	echo -e "Esperando 30 segundos antes de iniciar instancia Odoo..."
-	sleep 30
-
-	iniciarInstanciaOdoo
-
-	sleep 30
+	sleep 30 && iniciarInstanciaOdoo
 	echo -e "Construccion de imagenes app odoo, finalizado."
 	
-	crearArchivoCredenciales	    
+	sleep 30 && crearArchivoCredenciales	    
 	exit 0
 }
 
@@ -50,7 +46,7 @@ function iniciarInstanciaDB () {
 # Inicia instancia imagen app Odoo
 function iniciarInstanciaOdoo () {
 	echo -e "Iniciando Instancia App Odoo..."
-	docker run -p -v ${image_odoo_volume_data}:/var/lib/odoo -v ${image_odoo_path_addons}:/mnt/extra-addons 8069:${image_odoo_port} --name ${image_odoo_name} --link ${image_db_name}:${image_db_name} -t ${image_odoo_name}
+	docker run -v ${image_odoo_volume_data}:/var/lib/odoo -v ${image_odoo_path_addons}:/mnt/extra-addons -p 8069:${image_odoo_port} --name ${image_odoo_name} --link ${image_db_name}:${image_db_name} -d ${image_odoo_name}
 }
 
 # validar argumentos
@@ -81,12 +77,13 @@ function validarArgumentos () {
 		echo "Puerto de Imagen Odoo Vacio"
 		exit 0
 	fi
-	if [ -z "$image_odoo_volume_data"];
+	if [ -z "$image_odoo_volume_data" ];
 	then
 		echo "Volumen Data Imagen Odoo Vacio"
 		exit 0
 	fi
-	if [ -z "$image_odoo_path_addons"];
+	if [ -z "$image_odoo_path_addons" ];
+	then
 		echo "Ruta de Addons Imagen Odoo Vacio"
 		exit 0
 	fi
@@ -104,8 +101,10 @@ function validarArgumentos () {
 
 # mostrar mensaje final
 function crearArchivoCredenciales () {
+	ODOO_DIR='/' read -r -a array <<< "$image_odoo_path_addons"
+
 	echo -e "Creando archivo con credenciales: ${image_odoo_name}.txt"
-	cat "Usuario db = ${user_db}, Password db = ${pass_db}, Nombre db = ${name_db}" > ${image_odoo_name}.txt 
+	echo "Usuario db = ${user_db}, Password db = ${pass_db}, Nombre db = ${name_db}" > ${ODOO_DIR[0]}/${image_odoo_name}.txt 
 }
 
 ############################################
