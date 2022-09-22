@@ -6,7 +6,7 @@
 
 ##### Varibales:
 
-**Base datos Odoo: **
+**Base datos Odoo:**
 - user_db: Argumento para nombre de usuario en base de datos Odoo. 	Ejemplo. -> miusuariodb
 - pass_db: Argumento para password de usuario en base de datos Odoo. 	Ejemplo. -> mipassword123
 - name_db: Argumento para nombre de la base de datos Odoo. 		Ejemplo. -> db_odoo
